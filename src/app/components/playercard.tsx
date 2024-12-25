@@ -40,12 +40,19 @@ export const PlayerCard = ({ player, userIP }: { player: Player; userIP: string 
         >
           Kick
         </button>
-        {localStorage.getItem('username') !== player.name && localStorage.getItem('username') &&
+        {localStorage.getItem('username') !== player.name && localStorage.getItem('username') ?
           <button
             className="minecraft-btn px-2 text-center truncate border-2 border-b-4 hover:text-yellow-200"
             onClick={() => { sendCommand(`/tp ${localStorage.getItem('username')} ${player.name}`); }}
           >
             Teleport
+          </button>
+          :
+          <button
+            className="minecraft-btn px-2 text-center truncate border-2 border-b-4 hover:text-yellow-200"
+            onClick={() => { sendCommand(`/spreadplayers 0 0 0 1000000 false ${player.name}`); }}
+          >
+            RandomTP
           </button>
         }
         <button

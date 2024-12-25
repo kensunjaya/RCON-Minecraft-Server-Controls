@@ -89,8 +89,8 @@ export default function Home() {
 
   if (!loading && !serverIsOnline) {
     return (
-      <main className="p-4 bg-center bg-cover bg-no-repeat h-screen" style={{ backgroundImage: 'url(/background.webp)' }}>
-        <div>Server is offline</div>
+      <main className="p-4 font-mono bg-center bg-cover flex items-center justify-center bg-no-repeat h-screen w-full" style={{ backgroundImage: 'url(/background.webp)' }}>
+        <div className="text-2xl font-semibold">Server is offline</div>
       </main>
     );
   }
