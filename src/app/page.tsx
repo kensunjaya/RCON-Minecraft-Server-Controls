@@ -29,7 +29,7 @@ export default function Home() {
     try {
       await fetch(url, { method: 'HEAD' });
       const latency = performance.now() - startTime;
-      setLatency(latency);
+      setLatency(Math.round(latency));
     } catch (error) {
       console.error(error);
       setLatency(-1);
