@@ -79,7 +79,7 @@ export default function Home() {
   }
 
   return (
-    <main className="p-4 bg-center bg-cover bg-no-repeat h-screen text-white font-mono" style={{ backgroundImage: 'url(/background.webp)' }}>
+    <main className="p-4 bg-center bg-cover bg-no-repeat h-screen text-white font-mono bg-black" style={{ backgroundImage: 'url(/background.webp)' }}>
       <div className="flex justify-between text-lg">
         <div>Online Players:</div>
         {latency !== -1 ? <div>Ping: {latency} ms</div> : <MdOutlineSignalCellularNodata className="text-white text-lg"/>}
