@@ -1,5 +1,5 @@
 'use client';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { PlayerCard } from './components/playercard';
 import { Player } from './interfaces/interface';
 import { login, sendCommand } from './utilities/command';
@@ -121,12 +121,14 @@ export default function Home() {
       </div>
       <div className="flex flex-col gap-5">
         <textarea
+          onKeyDown={(e) => {if (e.key === 'Enter') {proceed()}}}
           value={command}
           onChange={(e) => setCommand(e.target.value)}
           placeholder="Enter RCON command.."
           className='border border-gray-800 rounded p-1 mr-2 my-3 text-black'
         />
-        <button onClick={proceed} className='minecraft-btn mx-auto w-64 text-center truncate p-1 border-2 border-b-4 hover:text-yellow-200'>
+        <button 
+          onClick={proceed} className='minecraft-btn mx-auto w-64 text-center truncate p-1 border-2 border-b-4 hover:text-yellow-200'>
           EXECUTE COMMAND
         </button>
         <label className="flex items-center gap-2 text-sm">
