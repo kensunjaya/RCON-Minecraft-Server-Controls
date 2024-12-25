@@ -1,7 +1,6 @@
 import { Player } from "../interfaces/interface";
 
 export const sendCommand = async (command: string) => {
-  console.log(command)
   try {
     const res = await fetch('/api/rcon', {
       method: 'POST',

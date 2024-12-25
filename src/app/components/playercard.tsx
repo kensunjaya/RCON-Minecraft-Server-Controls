@@ -3,7 +3,7 @@ import { Player } from "../interfaces/interface";
 import { sendCommand } from "../utilities/command";
 import Image from 'next/image';
 
-export const PlayerCard = ({ player }: { player: Player }) => {
+export const PlayerCard = ({ player, userIP }: { player: Player; userIP: string }) => {
   const [xp, setXp] = useState(0);
 
   useEffect(() => {
@@ -36,7 +36,7 @@ export const PlayerCard = ({ player }: { player: Player }) => {
       <div className="flex flex-wrap gap-2 mt-2 sm:mt-0">
         <button
           className="minecraft-btn px-2 text-center truncate border-2 border-b-4 hover:text-yellow-200"
-          onClick={() => { sendCommand(`/kick ${player.name}`); }}
+          onClick={() => { sendCommand(`/kick ${player.name} Kicked by ${userIP}`); }}
         >
           Kick
         </button>

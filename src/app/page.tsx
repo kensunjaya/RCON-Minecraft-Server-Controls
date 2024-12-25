@@ -15,6 +15,7 @@ export default function Home() {
   const [latency, setLatency] = useState(0);
   const [username, setUsername] = useState('');
   const [loginName, setLoginName] = useState('');
+  const [userIP, setUserIP] = useState('');
 
   const proceed = async () => {
     setLoading(true);
@@ -38,6 +39,18 @@ export default function Home() {
     }
   }
 
+  const getUserIpAddress = () => {
+    fetch("https://api.ipify.org?format=json")
+      .then(response => response.json())
+      .then(data => {
+        setUserIP(data.ip);
+        setUserIP(data.ip);
+      })
+      .catch(error => {
+        console.error(error);
+      });
+  }
+
   useEffect(() => {
     setLoginName(localStorage.getItem('username') || '');
     sendCommand('/list').then((response) => {
@@ -57,6 +70,7 @@ export default function Home() {
     });
     
     checkLatency('147.185.221.17');
+    getUserIpAddress();
     setInterval(() => checkLatency('147.185.221.17'), 10000);
     setInterval(() => sendCommand('/list').then((response) => {
       setServerIsOnline(true);
@@ -112,7 +126,7 @@ export default function Home() {
         {players.length > 0 && players[0].name !== "" ? (
           <ol>
             {players.map((player, index) => (
-              <PlayerCard key={index} player={player}></PlayerCard>
+              <PlayerCard key={index} userIP={userIP} player={player}></PlayerCard>
             ))}
           </ol>
         ) : (
