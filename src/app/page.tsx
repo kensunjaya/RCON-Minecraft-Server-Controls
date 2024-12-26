@@ -38,6 +38,7 @@ export default function Home() {
       await fetch(url, { method: 'HEAD' });
       const latency = performance.now() - startTime;
       setLatency(Math.round(latency));
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (error) {
       setLatency(-1);
     }
