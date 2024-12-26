@@ -20,7 +20,7 @@ export default function Home() {
   const [userIP, setUserIP] = useState('');
   const [initialLoading, setInitialLoading] = useState(true);
 
-  const tunnelIP = 'http://camera-molecules.gl.joinmc.link';
+  const tunnelIP = 'https://camera-molecules.gl.joinmc.link';
 
   const proceed = async () => {
     setLoading(true);
