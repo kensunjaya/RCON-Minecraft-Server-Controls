@@ -82,7 +82,7 @@ export default function Home() {
     
     checkLatency('147.185.221.17');
     getUserIpAddress();
-    setInterval(() => checkLatency('147.185.221.17'), 10000);
+    setInterval(() => checkLatency('147.185.221.17'), 5000);
     setInterval(() => sendCommand('/list').then((response) => {
       if (response === 'Failed to connect to RCON') {
         setServerIsOnline(false);
@@ -167,7 +167,7 @@ export default function Home() {
           value={command}
           onChange={(e) => setCommand(e.target.value)}
           placeholder="Enter RCON command.."
-          className='border border-gray-800 rounded p-1 mr-2 my-3 text-black'
+          className='border border-gray-800 rounded p-1 my-3 text-black'
         />
         <button 
           onClick={proceed} className='minecraft-btn mx-auto w-64 text-center truncate p-1 border-2 border-b-4 hover:text-yellow-200'>
@@ -182,8 +182,19 @@ export default function Home() {
           Auto-clear text area
         </label>
       </div>
-      <div className="text-xl mt-5">Response:</div>
-      <p className="text-lg">{response}</p>
+      <div className="text-xl mt-5">Output:</div>
+      {
+        response.length !== 0 &&
+        <textarea 
+        disabled={true} 
+        value={response} 
+        style={{
+          height: `${Math.max(5, response.split('\n').length)}rem`, // Minimum height of 3rem, grows based on the number of lines
+          maxHeight: '24rem'
+        }}
+        className="bg-black bg-opacity-60 text-lg w-full p-1 resize-none" />
+      }
+      
     </main>
   );
 }
