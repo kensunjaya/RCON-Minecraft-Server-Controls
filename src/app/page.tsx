@@ -33,13 +33,7 @@ export default function Home() {
   const checkLatency = async (url: string) => {
     const startTime = performance.now();
     try {
-      const res = await fetch(url, { method: 'HEAD' });
-      if (res.status === 404) {
-        setServerIsOnline(false);
-        setInitialLoading(false);
-        setLatency(-1);
-        return;
-      }
+      await fetch(url, { method: 'HEAD' });
       const latency = performance.now() - startTime;
       setLatency(Math.round(latency));
     } catch (error) {
