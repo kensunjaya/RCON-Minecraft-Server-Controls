@@ -4,6 +4,8 @@ import { PlayerCard } from './components/playercard';
 import { Player } from './interfaces/interface';
 import { login, sendCommand } from './utilities/command';
 import { MdOutlineSignalCellularNodata } from "react-icons/md";
+import { SquareLoader } from 'react-spinners';
+import { MdEmail } from "react-icons/md";
 
 export default function Home() {
   const [command, setCommand] = useState('');
@@ -16,13 +18,14 @@ export default function Home() {
   const [username, setUsername] = useState('');
   const [loginName, setLoginName] = useState('');
   const [userIP, setUserIP] = useState('');
+  const [initialLoading, setInitialLoading] = useState(true);
 
   const proceed = async () => {
     setLoading(true);
     const response = await sendCommand(command);
     setResponse(response);
     if (autoClearTextArea) {
-      setCommand(''); // Clear the textarea if autoClearTextArea is enabled
+      setCommand('');
     }
     setLoading(false);
   };
@@ -30,7 +33,13 @@ export default function Home() {
   const checkLatency = async (url: string) => {
     const startTime = performance.now();
     try {
-      await fetch(url, { method: 'HEAD' });
+      const res = await fetch(url, { method: 'HEAD' });
+      if (res.status === 404) {
+        setServerIsOnline(false);
+        setInitialLoading(false);
+        setLatency(-1);
+        return;
+      }
       const latency = performance.now() - startTime;
       setLatency(Math.round(latency));
     } catch (error) {
@@ -54,6 +63,12 @@ export default function Home() {
   useEffect(() => {
     setLoginName(localStorage.getItem('username') || '');
     sendCommand('/list').then((response) => {
+      if (response === 'Failed to connect to RCON') {
+        setServerIsOnline(false);
+        setLoading(false);
+        setInitialLoading(false);
+        return;
+      }
       setServerIsOnline(true);
       const match = response.match(/There are \d+ of a max of \d+ players online:\s*(.*)/);
       if (match) {
@@ -64,15 +79,22 @@ export default function Home() {
         setPlayers(playerList);
       }
     }).catch(() => {
-      setServerIsOnline(false);
+      setResponse('Failed to fetch online players');
     }).finally(() => {
       setLoading(false);
+      setInitialLoading(false);
     });
     
     checkLatency('147.185.221.17');
     getUserIpAddress();
     setInterval(() => checkLatency('147.185.221.17'), 10000);
     setInterval(() => sendCommand('/list').then((response) => {
+      if (response === 'Failed to connect to RCON') {
+        setServerIsOnline(false);
+        setLoading(false);
+        setInitialLoading(false);
+        return;
+      }
       setServerIsOnline(true);
       const match = response.match(/There are \d+ of a max of \d+ players online:\s*(.*)/);
       if (match) {
@@ -83,14 +105,24 @@ export default function Home() {
         setPlayers(playerList);
       }
     }).catch(() => {
-      setServerIsOnline(false);
-    }), 20000);
+      setResponse('Failed to fetch online players');
+    }), 10000);
   }, []);
 
-  if (!loading && !serverIsOnline) {
+  if (initialLoading) {
     return (
-      <main className="p-4 font-mono bg-center bg-cover flex items-center justify-center bg-no-repeat h-screen w-full text-white" style={{ backgroundImage: 'url(/background.webp)' }}>
-        <div className="text-4xl font-semibold">Server is offline</div>
+      <div className="absolute inset-0 flex items-center justify-center bg-opacity-20 bg-center bg-cover" style={{ backgroundImage: 'url(/background.webp)' }}>
+        <SquareLoader loading={loading} color="white" size='50px' />
+      </div>
+    )
+  }
+
+  else if (!serverIsOnline) {
+    return (
+      <main className="p-4 font-mono bg-center bg-cover flex flex-col gap-8 items-center justify-center bg-no-repeat h-screen w-full text-white" style={{ backgroundImage: 'url(/background.webp)' }}>
+        <div className="hover:cursor-default text-4xl font-semibold">Server is offline</div>
+        <div className="hover:cursor-default text-xl">Contact the server administrator for further information</div>
+        <a href="mailto:kennethsunjaya@gmail.com" className="hover:text-green-500 transition text-xl flex flex-row items-center gap-3"><MdEmail />kennethsunjaya@gmail.com</a>
       </main>
     );
   }
