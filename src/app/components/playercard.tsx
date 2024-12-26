@@ -1,19 +1,17 @@
-import { useEffect, useState } from "react";
 import { Player } from "../interfaces/interface";
 import { sendCommand } from "../utilities/command";
 import Image from 'next/image';
 
 export const PlayerCard = ({ player, userIP }: { player: Player; userIP: string }) => {
-  const [xp, setXp] = useState(0);
 
-  useEffect(() => {
-    sendCommand(`/xp query ${player.name} levels`).then((response) => {
-      const match = response.match(/(\d+)/);
-      if (match) {
-        setXp(parseInt(match[1], 10));
-      }
-    });
-  }, []);
+  // useEffect(() => {
+  //   sendCommand(`/xp query ${player.name} levels`).then((response) => {
+  //     const match = response.match(/(\d+)/);
+  //     if (match) {
+  //       setXp(parseInt(match[1], 10));
+  //     }
+  //   });
+  // }, []);
 
   return (
     <div
@@ -32,7 +30,7 @@ export const PlayerCard = ({ player, userIP }: { player: Player; userIP: string 
         className="rounded-sm shadow-xl"
       />
       <div className="font-mono text-xl">{player.name}</div>
-      <div className="font-mono text-xl ml-auto text-yellow-300">{xp} levels</div>
+      <div className="font-mono text-xl ml-auto text-yellow-300">{player.xp} levels</div>
       <div className="flex flex-wrap gap-2 mt-2 sm:mt-0">
         <button
           className="minecraft-btn px-2 text-center truncate border-2 border-b-4 hover:text-yellow-200"

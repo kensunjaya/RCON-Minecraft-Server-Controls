@@ -26,6 +26,29 @@ export const sendCommand = async (command: string, playsound = false) => {
   }
 };
 
+export const sendMultipleCommand = async(commands: string[]) => {
+  try {
+    const response = await fetch('/api/rcon-multiple', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ commands }),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      console.error('Error:', errorData.error);
+      return;
+    }
+
+    const data = await response.json();
+    return data.results;
+  } catch (error) {
+    return error
+  }
+}
+
 export const login = async (username: string, onlinePlayers: Player[]) => {
   const onlinePlayersNames = onlinePlayers.map(player => player.name);
   for (const name of onlinePlayersNames) {

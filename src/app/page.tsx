@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import { PlayerCard } from './components/playercard';
 import { Player } from './interfaces/interface';
-import { login, sendCommand } from './utilities/command';
+import { login, sendCommand, sendMultipleCommand } from './utilities/command';
 import { MdOutlineSignalCellularNodata } from "react-icons/md";
 import { SquareLoader } from 'react-spinners';
 import { MdEmail } from "react-icons/md";
@@ -20,6 +20,8 @@ export default function Home() {
   const [userIP, setUserIP] = useState('');
   const [initialLoading, setInitialLoading] = useState(true);
 
+  const tunnelIP = 'http://camera-molecules.gl.joinmc.link';
+
   const proceed = async () => {
     setLoading(true);
     const response = await sendCommand(command, true);
@@ -33,14 +35,25 @@ export default function Home() {
   const checkLatency = async (url: string) => {
     const startTime = performance.now();
     try {
-      await fetch(url, { method: 'HEAD' });
-      const latency = performance.now() - startTime;
-      setLatency(Math.round(latency));
+      const response = await fetch(url, { method: 'HEAD' });
+  
+      if (response.ok) {
+        const latency = performance.now() - startTime;
+        setLatency(Math.round(latency));
+      } else {
+        console.error(`Received error response: ${response.status} - ${response.statusText}`);
+        setLatency(-1);
+      }
     } catch (error) {
-      console.error(error);
-      setLatency(-1);
+      // Handle CORS-related errors
+      if (error instanceof TypeError && error.message.includes("NetworkError when attempting to fetch resource")) {
+        setLatency(0);
+      } else {
+        // Handle other types of errors (network or other issues)
+        setLatency(-1);
+      }
     }
-  }
+  };
 
   const getUserIpAddress = () => {
     fetch("https://api.ipify.org?format=json")
@@ -70,7 +83,21 @@ export default function Home() {
         for (let i = 0; i < playerList.length; i++) {
           playerList[i] = { name: playerList[i] };
         }
-        setPlayers(playerList);
+        if (playerList.length !== 0 && playerList[0].name !== '') {
+          const commands = [];
+          for (const player of playerList) {
+            commands.push(`/xp query ${player.name} levels`);
+          }
+          sendMultipleCommand(commands).then((responses) => {
+            for (let i = 0; i < responses.length; i++) {
+              const match = responses[i].result.match(/(\d+)/);
+              if (match) {
+                playerList[i].xp = parseInt(match[1], 10);
+              }
+            }
+            setPlayers(playerList);
+          });
+        }
       }
     }).catch(() => {
       setResponse('Failed to fetch online players');
@@ -80,9 +107,9 @@ export default function Home() {
       setInitialLoading(false);
     });
     
-    checkLatency('147.185.221.17');
+    checkLatency(tunnelIP);
     getUserIpAddress();
-    setInterval(() => checkLatency('147.185.221.17'), 5000);
+    setInterval(() => checkLatency(tunnelIP), 5000);
     setInterval(() => sendCommand('/list').then((response) => {
       if (response === 'Failed to connect to RCON') {
         setServerIsOnline(false);
@@ -97,7 +124,21 @@ export default function Home() {
         for (let i = 0; i < playerList.length; i++) {
           playerList[i] = { name: playerList[i] };
         }
-        setPlayers(playerList);
+        if (playerList.length !== 0 && playerList[0].name !== '') {
+          const commands = [];
+          for (const player of playerList) {
+            commands.push(`/xp query ${player.name} levels`);
+          }
+          sendMultipleCommand(commands).then((responses) => {
+            for (let i = 0; i < responses.length; i++) {
+              const match = responses[i].result.match(/(\d+)/);
+              if (match) {
+                playerList[i].xp = parseInt(match[1], 10);
+              }
+            }
+            setPlayers(playerList);
+          });
+        }
       }
     }).catch(() => {
       setResponse('Failed to fetch online players');
