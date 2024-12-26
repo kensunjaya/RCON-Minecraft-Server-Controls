@@ -20,7 +20,7 @@ export default function Home() {
   const [userIP, setUserIP] = useState('');
   const [initialLoading, setInitialLoading] = useState(true);
 
-  const tunnelIP = 'https://camera-molecules.gl.joinmc.link';
+  const tunnelIP = 'camera-molecules.gl.joinmc.link';
 
   const proceed = async () => {
     setLoading(true);
@@ -35,23 +35,11 @@ export default function Home() {
   const checkLatency = async (url: string) => {
     const startTime = performance.now();
     try {
-      const response = await fetch(url, { method: 'HEAD' });
-  
-      if (response.ok) {
-        const latency = performance.now() - startTime;
-        setLatency(Math.round(latency));
-      } else {
-        console.error(`Received error response: ${response.status} - ${response.statusText}`);
-        setLatency(-1);
-      }
+      await fetch(url, { method: 'HEAD' });
+      const latency = performance.now() - startTime;
+      setLatency(Math.round(latency));
     } catch (error) {
-      // Handle CORS-related errors
-      if (error instanceof TypeError && error.message.includes("NetworkError when attempting to fetch resource")) {
-        setLatency(0);
-      } else {
-        // Handle other types of errors (network or other issues)
-        setLatency(-1);
-      }
+      setLatency(-1);
     }
   };
 
