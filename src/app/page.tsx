@@ -22,7 +22,7 @@ export default function Home() {
 
   const proceed = async () => {
     setLoading(true);
-    const response = await sendCommand(command);
+    const response = await sendCommand(command, true);
     setResponse(response);
     if (autoClearTextArea) {
       setCommand('');
@@ -129,7 +129,7 @@ export default function Home() {
       loginName !== '' ?
       <div className="fixed bottom-5 flex items-center justify-center w-full gap-3">
         <div className="text-lg">Signed in as {localStorage.getItem('username')}</div>
-        <button onClick={() => {localStorage.removeItem('username'); setLoginName('')}} className="minecraft-btn px-2 mx-5 text-center truncate border-2 border-b-4 hover:text-yellow-200">Logout</button>
+        <button onClick={() => {localStorage.removeItem('username'); setLoginName('')}} className="minecraft-btn px-2 ml-5 text-center truncate border-2 border-b-4 hover:text-yellow-200">Logout</button>
       </div>
       :
       <div className="fixed bottom-5 flex items-center justify-center w-full gap-3">
@@ -142,7 +142,7 @@ export default function Home() {
           else {
             setUsername('');
           }
-        }} className="minecraft-btn px-2 mx-5 text-center truncate border-2 border-b-4 hover:text-yellow-200">Login</button>
+        }} className="minecraft-btn px-2 ml-5 text-center truncate border-2 border-b-4 hover:text-yellow-200">Login</button>
       </div>
     }
     <main className="p-4 bg-center bg-cover bg-no-repeat min-h-screen text-white font-mono bg-black" style={{ backgroundImage: 'url(/background.webp)' }}>

@@ -43,21 +43,21 @@ export const PlayerCard = ({ player, userIP }: { player: Player; userIP: string 
         {localStorage.getItem('username') !== player.name && localStorage.getItem('username') ?
           <button
             className="minecraft-btn px-3 text-center truncate border-2 border-b-4 hover:text-yellow-200"
-            onClick={() => { sendCommand(`/tp ${localStorage.getItem('username')} ${player.name}`); }}
+            onClick={() => { sendCommand(`/tp ${localStorage.getItem('username')} ${player.name}`, true); }}
           >
             Teleport
           </button>
           :
           <button
             className="minecraft-btn px-3 text-center truncate border-2 border-b-4 hover:text-yellow-200"
-            onClick={() => { sendCommand(`/spreadplayers 0 0 0 1000000 false ${player.name}`); }}
+            onClick={() => { sendCommand(`/spreadplayers 0 0 0 1000000 false ${player.name}`, true); }}
           >
             RandomTP
           </button>
         }
         <button
           className="minecraft-btn px-3 text-center truncate border-2 border-b-4 hover:text-yellow-200"
-          onClick={() => { sendCommand(`/execute at ${player.name} run summon minecraft:lightning_bolt`); }}
+          onClick={() => { sendCommand(`/execute at ${player.name} run summon minecraft:lightning_bolt`, true); }}
         >
           Zap
         </button>

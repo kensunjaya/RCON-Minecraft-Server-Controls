@@ -1,6 +1,10 @@
 import { Player } from "../interfaces/interface";
 
-export const sendCommand = async (command: string) => {
+export const sendCommand = async (command: string, playsound = false) => {
+  if (playsound) {
+    const audio = new Audio('/button.mp3');
+    audio.play();
+  }
   try {
     const res = await fetch('/api/rcon', {
       method: 'POST',
