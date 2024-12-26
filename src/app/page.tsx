@@ -80,6 +80,7 @@ export default function Home() {
       }
     }).catch(() => {
       setResponse('Failed to fetch online players');
+      setServerIsOnline(false);
     }).finally(() => {
       setLoading(false);
       setInitialLoading(false);
@@ -106,7 +107,8 @@ export default function Home() {
       }
     }).catch(() => {
       setResponse('Failed to fetch online players');
-    }), 10000);
+      setServerIsOnline(false);
+    }), 25000);
   }, []);
 
   if (initialLoading) {
@@ -121,7 +123,7 @@ export default function Home() {
     return (
       <main className="p-4 font-mono bg-center bg-cover flex flex-col gap-8 items-center justify-center bg-no-repeat h-screen w-full text-white" style={{ backgroundImage: 'url(/background.webp)' }}>
         <div className="hover:cursor-default text-4xl font-semibold">Server is offline</div>
-        <div className="hover:cursor-default text-xl">Contact the server administrator for further information</div>
+        <div className="hover:cursor-default text-xl text-center">Contact the server administrator for further information</div>
         <a href="mailto:kennethsunjaya@gmail.com" className="hover:text-green-500 transition text-xl flex flex-row items-center gap-3"><MdEmail />kennethsunjaya@gmail.com</a>
       </main>
     );
