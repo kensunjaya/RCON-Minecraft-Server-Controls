@@ -48,7 +48,7 @@ export const PlayerCard = ({ player, userIP }: { player: Player; userIP: string 
           :
           <button
             className="minecraft-btn px-3 text-center truncate border-2 border-b-4 hover:text-yellow-200"
-            onClick={() => { sendCommand(`/spreadplayers 0 0 0 1000000 false ${player.name}`, true); }}
+            onClick={() => { sendCommand(`/spreadplayers 0 0 0 100000 false ${player.name}`, true); }}
           >
             RandomTP
           </button>
