@@ -59,6 +59,12 @@ export const PlayerCard = ({ player, userIP }: { player: Player; userIP: string 
         >
           Zap
         </button>
+        <button
+          className="minecraft-btn px-3 text-center truncate border-2 border-b-4 hover:text-yellow-200"
+          onClick={() => { sendCommand(`/effect give ${player.name} blindness 9999`, true); }}
+        >
+          Curse
+        </button>
       </div>
     </div>
   );
