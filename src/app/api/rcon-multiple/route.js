@@ -11,7 +11,7 @@ export async function POST(req) {
     const rcon = new Rcon({
       host: '147.185.221.27',
       port: 52405,
-      password: process.env.NEXT_PUBLIC_RCON_PASSWORD || 'abcd1234',
+      password: process.env.RCON_PASSWORD || 'abcd1234',
     });
 
     const timeoutPromise = new Promise((_, reject) =>
