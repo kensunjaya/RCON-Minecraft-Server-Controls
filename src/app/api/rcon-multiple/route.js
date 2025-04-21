@@ -1,3 +1,4 @@
+'use server';
 import { Rcon } from 'rcon-client';
 
 export async function POST(req) {
@@ -8,9 +9,9 @@ export async function POST(req) {
 
   try {
     const rcon = new Rcon({
-      host: '147.185.221.17',
-      port: 44176,
-      password: 'abcd1234',
+      host: '147.185.221.27',
+      port: 52405,
+      password: process.env.NEXT_PUBLIC_RCON_PASSWORD || 'abcd1234',
     });
 
     const timeoutPromise = new Promise((_, reject) =>

@@ -20,7 +20,7 @@ export default function Home() {
   const [userIP, setUserIP] = useState('');
   const [initialLoading, setInitialLoading] = useState(true);
 
-  const tunnelIP = 'camera-molecules.gl.joinmc.link';
+  const tunnelIP = process.env.NEXT_PUBLIC_TUNNEL_IP || 'placeholder';
 
   const proceed = async () => {
     setLoading(true);
@@ -58,7 +58,7 @@ export default function Home() {
 
   useEffect(() => {
     setLoginName(localStorage.getItem('username') || '');
-    sendCommand('/list').then((response) => {
+    sendCommand('list').then((response) => {
       if (response === 'Failed to connect to RCON') {
         setServerIsOnline(false);
         setLoading(false);
@@ -75,7 +75,7 @@ export default function Home() {
         if (playerList.length !== 0 && playerList[0].name !== '') {
           const commands = [];
           for (const player of playerList) {
-            commands.push(`/xp query ${player.name} levels`);
+            commands.push(`xp query ${player.name} levels`);
           }
           sendMultipleCommand(commands).then((responses) => {
             for (let i = 0; i < responses.length; i++) {
@@ -98,8 +98,8 @@ export default function Home() {
     
     checkLatency(tunnelIP);
     getUserIpAddress();
-    setInterval(() => checkLatency(tunnelIP), 5000);
-    setInterval(() => sendCommand('/list').then((response) => {
+    setInterval(() => checkLatency(tunnelIP), 10000);
+    setInterval(() => sendCommand('list').then((response) => {
       if (response === 'Failed to connect to RCON') {
         setServerIsOnline(false);
         setLoading(false);
@@ -116,7 +116,7 @@ export default function Home() {
         if (playerList.length !== 0 && playerList[0].name !== '') {
           const commands = [];
           for (const player of playerList) {
-            commands.push(`/xp query ${player.name} levels`);
+            commands.push(`xp query ${player.name} levels`);
           }
           sendMultipleCommand(commands).then((responses) => {
             for (let i = 0; i < responses.length; i++) {
@@ -175,9 +175,7 @@ export default function Home() {
         }} className="minecraft-btn px-2 ml-5 text-center truncate border-2 border-b-4 hover:text-yellow-200">Login</button>
       </div>
     }
-    <main className="p-4 bg-center bg-cover bg-no-repeat min-h-screen text-white font-mono bg-black" style={{ backgroundImage: 'url(/background.webp)' }}>
-      
-      
+    <main className="p-4 bg-center lg:px-[200px] xl:px-[400px] bg-cover bg-no-repeat min-h-screen text-white font-mono bg-black" style={{ backgroundImage: 'url(/background.webp)' }}>
       <div className="flex justify-between text-lg">
         <div>Online Players:</div>
         {latency !== -1 ? <div>Ping: {latency} ms</div> : <MdOutlineSignalCellularNodata className="text-white text-lg"/>}

@@ -34,34 +34,34 @@ export const PlayerCard = ({ player, userIP }: { player: Player; userIP: string 
       <div className="flex flex-wrap gap-2 mt-2 sm:mt-0">
         <button
           className="minecraft-btn px-2 text-center truncate border-2 border-b-4 hover:text-yellow-200"
-          onClick={() => { sendCommand(`/kick ${player.name} Kicked by ${userIP}`); }}
+          onClick={() => { sendCommand(`kick ${player.name} Kicked by ${userIP}`); }}
         >
           Kick
         </button>
         {localStorage.getItem('username') !== player.name && localStorage.getItem('username') ?
           <button
             className="minecraft-btn px-3 text-center truncate border-2 border-b-4 hover:text-yellow-200"
-            onClick={() => { sendCommand(`/tp ${localStorage.getItem('username')} ${player.name}`, true); }}
+            onClick={() => { sendCommand(`tp ${localStorage.getItem('username')} ${player.name}`, true); }}
           >
             Teleport
           </button>
           :
           <button
             className="minecraft-btn px-3 text-center truncate border-2 border-b-4 hover:text-yellow-200"
-            onClick={() => { sendCommand(`/spreadplayers 0 0 0 100000 false ${player.name}`, true); }}
+            onClick={() => { sendCommand(`spreadplayers 0 0 0 100000 false ${player.name}`, true); }}
           >
             RandomTP
           </button>
         }
         <button
           className="minecraft-btn px-3 text-center truncate border-2 border-b-4 hover:text-yellow-200"
-          onClick={() => { sendCommand(`/execute at ${player.name} run summon minecraft:lightning_bolt`, true); }}
+          onClick={() => { sendCommand(`execute at ${player.name} run summon minecraft:lightning_bolt`, true); }}
         >
           Zap
         </button>
         <button
           className="minecraft-btn px-3 text-center truncate border-2 border-b-4 hover:text-yellow-200"
-          onClick={() => { sendCommand(`/effect give ${player.name} blindness 9999`, true); }}
+          onClick={() => { sendCommand(`effect give ${player.name} blindness 9999`, true); }}
         >
           Curse
         </button>
