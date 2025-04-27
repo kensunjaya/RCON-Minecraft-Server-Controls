@@ -53,7 +53,6 @@ export default function Home() {
       }
       setServerIsOnline(data.online);
       setPlayers(data.players);
-      console.log(data);
       if (data.players) {
         const commands = [];
         const playerList = data.players.list;
