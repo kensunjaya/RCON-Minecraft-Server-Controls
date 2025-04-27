@@ -65,9 +65,6 @@ export default function Home() {
             if (match) {
               playerList[i].xp = parseInt(match[1], 10);
             }
-            else {
-              console.error('Failed to parse XP:', responses[i].result);
-            }
           }
           setPlayers({ ...data.players, list: playerList });
         });
@@ -98,7 +95,7 @@ export default function Home() {
     getUserIpAddress();
   }, []);
 
-  if (initialLoading || serverData === undefined || players === undefined) {
+  if (serverData === undefined) {
     return (
       <div className="absolute inset-0 flex items-center justify-center bg-opacity-20 bg-center bg-cover" style={{ backgroundImage: 'url(/background.webp)' }}>
         <SquareLoader loading={loading} color="white" size='50px' />
@@ -106,7 +103,7 @@ export default function Home() {
     )
   }
 
-  else if (!serverIsOnline) {
+  else if (!serverIsOnline || players === undefined) {
     return (
       <main className="p-4 font-mono bg-center bg-cover flex flex-col gap-8 items-center justify-center bg-no-repeat h-screen w-full text-white" style={{ backgroundImage: 'url(/background.webp)' }}>
         <div className="hover:cursor-default text-4xl font-semibold">Server is offline</div>
