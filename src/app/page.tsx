@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 'use client';
 import React, { useEffect, useState } from 'react';
 import { PlayerCard } from './components/playercard';
@@ -19,7 +20,6 @@ export default function Home() {
   const [username, setUsername] = useState('');
   const [loginName, setLoginName] = useState('');
   const [userIP, setUserIP] = useState('');
-  const [initialLoading, setInitialLoading] = useState(true);
 
   const tunnelIP = process.env.NEXT_PUBLIC_SERVER_IP || 'placeholder';
 
@@ -72,7 +72,6 @@ export default function Home() {
     } catch (error) {
       console.error('Failed to fetch server status:', error);
     } finally {
-      setInitialLoading(false);
       setLoading(false);
     }
   }
@@ -136,21 +135,19 @@ export default function Home() {
       </div>
     }
     <main className="p-4 bg-center lg:px-[200px] xl:px-[400px] bg-cover bg-no-repeat min-h-screen text-white font-mono bg-black" style={{ backgroundImage: 'url(/background.webp)' }}>
-      <div>Address: {`${serverData.host} (${serverData.ip_address})`}</div>
+      <div>{`${serverData.host}`}</div>
       <div dangerouslySetInnerHTML={{ __html: serverData.motd.html.replace(/\n/g, '<br />') }} className="bg-black bg-opacity-50 p-2 my-2" />
       <div className="flex justify-between text-lg">
         <div>{`Online Players (${players.online} of ${players.max})`}</div>
         {latency !== -1 ? <div>{latency == -99 ? '' : latency + ' ms'}</div> : <MdOutlineSignalCellularNodata className="text-white text-lg"/>}
       </div>
       <div>
-        {players.list.length > 0 && players.list[0].name_clean !== "" ? (
+        {players.list.length > 0 && players.list[0].name_clean !== "" && (
           <ol>
             {players.list.map((player, index) => (
               <PlayerCard key={index} userIP={userIP} player={player}></PlayerCard>
             ))}
           </ol>
-        ) : (
-          <div className="text-lg my-5">No players online</div>
         )}
       </div>
       <div className="flex flex-col gap-5">
