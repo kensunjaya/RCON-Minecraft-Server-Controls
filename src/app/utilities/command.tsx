@@ -1,4 +1,4 @@
-import { Player } from "../interfaces/interface";
+import { Players } from "../interfaces/interface";
 
 export const sendCommand = async (command: string, playsound = false) => {
   if (playsound) {
@@ -49,8 +49,8 @@ export const sendMultipleCommand = async(commands: string[]) => {
   }
 }
 
-export const login = async (username: string, onlinePlayers: Player[]) => {
-  const onlinePlayersNames = onlinePlayers.map(player => player.name);
+export const login = async (username: string, onlinePlayers: Players) => {
+  const onlinePlayersNames = onlinePlayers.list.map(player => player.name_clean);
   for (const name of onlinePlayersNames) {
     if (name === username) {
       localStorage.setItem('username', username);

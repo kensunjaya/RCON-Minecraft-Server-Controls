@@ -1,7 +1,7 @@
 'use client';
 import React, { useEffect, useState } from 'react';
 import { PlayerCard } from './components/playercard';
-import { Player } from './interfaces/interface';
+import { Players, ServerData } from './interfaces/interface';
 import { login, sendCommand, sendMultipleCommand } from './utilities/command';
 import { MdOutlineSignalCellularNodata } from "react-icons/md";
 import { SquareLoader } from 'react-spinners';
@@ -9,20 +9,25 @@ import { MdEmail } from "react-icons/md";
 
 export default function Home() {
   const [command, setCommand] = useState('');
+  const [serverData, setServerData] = useState<ServerData | undefined>(undefined);
   const [response, setResponse] = useState('');
-  const [players, setPlayers] = useState<Player[]>([]);
+  const [players, setPlayers] = useState<Players>();
   const [loading, setLoading] = useState(true);
   const [serverIsOnline, setServerIsOnline] = useState(false);
   const [autoClearTextArea, setAutoClearTextArea] = useState(true);
-  const [latency, setLatency] = useState(0);
+  const [latency, setLatency] = useState(-99);
   const [username, setUsername] = useState('');
   const [loginName, setLoginName] = useState('');
   const [userIP, setUserIP] = useState('');
   const [initialLoading, setInitialLoading] = useState(true);
 
-  const tunnelIP = process.env.NEXT_PUBLIC_TUNNEL_IP || 'placeholder';
+  const tunnelIP = process.env.NEXT_PUBLIC_SERVER_IP || 'placeholder';
 
   const proceed = async () => {
+    if (command.startsWith('restart') || command.startsWith('stop') || command.startsWith('op') || command.startsWith('deop') || command.startsWith('pardon') || command.startsWith('execute') || command.startsWith('ban') || command.startsWith('kick') || command.startsWith('whitelist') || command.startsWith('ban-ip')) {
+      setResponse('This command is not allowed');
+      return;
+    }
     setLoading(true);
     const response = await sendCommand(command, true);
     setResponse(response);
@@ -32,17 +37,50 @@ export default function Home() {
     setLoading(false);
   };
 
-  const checkLatency = async (url: string) => {
-    const startTime = performance.now();
+  const checkMinecraftServerStatus = async (address: string) => {
     try {
-      await fetch(url, { method: 'HEAD' });
-      const latency = performance.now() - startTime;
-      setLatency(Math.round(latency));
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      setLoading(true);
+      const response = await fetch(`https://api.mcstatus.io/v2/status/java/${address}`);
+      setLatency(latency);
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const data = await response.json();
+      setServerData(data);
+      if (!data.online) {
+        setServerIsOnline(false);
+        return;
+      }
+      setServerIsOnline(data.online);
+      setPlayers(data.players);
+      console.log(data);
+      if (data.players) {
+        const commands = [];
+        const playerList = data.players.list;
+        for (const player of data.players.list) {
+          commands.push(`xp query ${player.name_clean} levels`);
+        }
+        sendMultipleCommand(commands).then((responses) => {
+          for (let i = 0; i < responses.length; i++) {
+            const match = responses[i].result.match(/(\d+)/);
+            if (match) {
+              playerList[i].xp = parseInt(match[1], 10);
+              console.log(playerList[i].xp);
+            }
+            else {
+              console.error('Failed to parse XP:', responses[i].result);
+            }
+          }
+          setPlayers({ ...data.players, list: playerList });
+        });
+      }
     } catch (error) {
-      setLatency(-1);
+      console.error('Failed to fetch server status:', error);
+    } finally {
+      setInitialLoading(false);
+      setLoading(false);
     }
-  };
+  }
 
   const getUserIpAddress = () => {
     fetch("https://api.ipify.org?format=json")
@@ -58,84 +96,11 @@ export default function Home() {
 
   useEffect(() => {
     setLoginName(localStorage.getItem('username') || '');
-    sendCommand('list').then((response) => {
-      if (response === 'Failed to connect to RCON') {
-        setServerIsOnline(false);
-        setLoading(false);
-        setInitialLoading(false);
-        return;
-      }
-      setServerIsOnline(true);
-      const match = response.match(/There are \d+ of a max of \d+ players online:\s*(.*)/);
-      if (match) {
-        const playerList = match[1].split(', ');
-        for (let i = 0; i < playerList.length; i++) {
-          playerList[i] = { name: playerList[i] };
-        }
-        if (playerList.length !== 0 && playerList[0].name !== '') {
-          const commands = [];
-          for (const player of playerList) {
-            commands.push(`xp query ${player.name} levels`);
-          }
-          sendMultipleCommand(commands).then((responses) => {
-            for (let i = 0; i < responses.length; i++) {
-              const match = responses[i].result.match(/(\d+)/);
-              if (match) {
-                playerList[i].xp = parseInt(match[1], 10);
-              }
-            }
-            setPlayers(playerList);
-          });
-        }
-      }
-    }).catch(() => {
-      setResponse('Failed to fetch online players');
-      setServerIsOnline(false);
-    }).finally(() => {
-      setLoading(false);
-      setInitialLoading(false);
-    });
-    
-    checkLatency(tunnelIP);
+    checkMinecraftServerStatus(tunnelIP);
     getUserIpAddress();
-    setInterval(() => checkLatency(tunnelIP), 10000);
-    setInterval(() => sendCommand('list').then((response) => {
-      if (response === 'Failed to connect to RCON') {
-        setServerIsOnline(false);
-        setLoading(false);
-        setInitialLoading(false);
-        return;
-      }
-      setServerIsOnline(true);
-      const match = response.match(/There are \d+ of a max of \d+ players online:\s*(.*)/);
-      if (match) {
-        const playerList = match[1].split(', ');
-        for (let i = 0; i < playerList.length; i++) {
-          playerList[i] = { name: playerList[i] };
-        }
-        if (playerList.length !== 0 && playerList[0].name !== '') {
-          const commands = [];
-          for (const player of playerList) {
-            commands.push(`xp query ${player.name} levels`);
-          }
-          sendMultipleCommand(commands).then((responses) => {
-            for (let i = 0; i < responses.length; i++) {
-              const match = responses[i].result.match(/(\d+)/);
-              if (match) {
-                playerList[i].xp = parseInt(match[1], 10);
-              }
-            }
-            setPlayers(playerList);
-          });
-        }
-      }
-    }).catch(() => {
-      setResponse('Failed to fetch online players');
-      setServerIsOnline(false);
-    }), 25000);
   }, []);
 
-  if (initialLoading) {
+  if (initialLoading || serverData === undefined || players === undefined) {
     return (
       <div className="absolute inset-0 flex items-center justify-center bg-opacity-20 bg-center bg-cover" style={{ backgroundImage: 'url(/background.webp)' }}>
         <SquareLoader loading={loading} color="white" size='50px' />
@@ -176,14 +141,16 @@ export default function Home() {
       </div>
     }
     <main className="p-4 bg-center lg:px-[200px] xl:px-[400px] bg-cover bg-no-repeat min-h-screen text-white font-mono bg-black" style={{ backgroundImage: 'url(/background.webp)' }}>
+      <div>Address: {`${serverData.host} (${serverData.ip_address})`}</div>
+      <div dangerouslySetInnerHTML={{ __html: serverData.motd.html.replace(/\n/g, '<br />') }} className="bg-black bg-opacity-50 p-2 my-2" />
       <div className="flex justify-between text-lg">
-        <div>Online Players:</div>
-        {latency !== -1 ? <div>Ping: {latency} ms</div> : <MdOutlineSignalCellularNodata className="text-white text-lg"/>}
+        <div>{`Online Players (${players.online} of ${players.max})`}</div>
+        {latency !== -1 ? <div>{latency == -99 ? '' : latency + ' ms'}</div> : <MdOutlineSignalCellularNodata className="text-white text-lg"/>}
       </div>
       <div>
-        {players.length > 0 && players[0].name !== "" ? (
+        {players.list.length > 0 && players.list[0].name_clean !== "" ? (
           <ol>
-            {players.map((player, index) => (
+            {players.list.map((player, index) => (
               <PlayerCard key={index} userIP={userIP} player={player}></PlayerCard>
             ))}
           </ol>
@@ -196,7 +163,7 @@ export default function Home() {
           onKeyDown={(e) => {if (e.key === 'Enter') {proceed()}}}
           value={command}
           onChange={(e) => setCommand(e.target.value)}
-          placeholder="Enter RCON command.."
+          placeholder="Enter Minecraft command.."
           className='border border-gray-800 rounded p-1 my-3 text-black'
         />
         <button 
