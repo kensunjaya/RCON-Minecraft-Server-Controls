@@ -64,7 +64,6 @@ export default function Home() {
             const match = responses[i].result.match(/(\d+)/);
             if (match) {
               playerList[i].xp = parseInt(match[1], 10);
-              console.log(playerList[i].xp);
             }
             else {
               console.error('Failed to parse XP:', responses[i].result);
