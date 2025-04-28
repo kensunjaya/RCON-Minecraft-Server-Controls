@@ -104,8 +104,8 @@ export default function Home() {
 
   else if (!serverIsOnline || players === undefined) {
     return (
-      <main className="p-4 font-mono bg-center bg-cover flex flex-col gap-8 items-center justify-center bg-no-repeat h-screen w-full text-white" style={{ backgroundImage: 'url(/background.webp)' }}>
-        <div className="hover:cursor-default text-4xl font-semibold">Server is offline</div>
+      <main className="p-4 font-sans bg-center bg-cover flex flex-col gap-8 items-center justify-center bg-no-repeat h-screen w-full text-white" style={{ backgroundImage: 'url(/background.webp)' }}>
+        <div className="hover:cursor-default text-4xl font-semibold">Server is OFFLINE</div>
         <div className="hover:cursor-default text-xl text-center">Contact the server administrator for further information</div>
         <a href="mailto:kennethsunjaya@gmail.com" className="hover:text-green-500 transition text-xl flex flex-row items-center gap-3"><MdEmail />kennethsunjaya@gmail.com</a>
       </main>
@@ -117,7 +117,7 @@ export default function Home() {
     { 
       loginName !== '' ?
       <div className="fixed bottom-5 flex items-center justify-center w-full gap-3">
-        <div className="text-lg">Signed in as {localStorage.getItem('username')}</div>
+        <div className="text-lg bg-black font-sans bg-opacity-50 rounded-md p-1">Signed in as {localStorage.getItem('username')}</div>
         <button onClick={() => {localStorage.removeItem('username'); setLoginName('')}} className="minecraft-btn px-2 ml-5 text-center truncate border-2 border-b-4 hover:text-yellow-200">Logout</button>
       </div>
       :
@@ -137,7 +137,7 @@ export default function Home() {
     <main className="p-4 bg-center lg:px-[200px] xl:px-[400px] bg-cover bg-no-repeat min-h-screen text-white font-mono bg-black" style={{ backgroundImage: 'url(/background.webp)' }}>
       <div>{`${serverData.host}`}</div>
       <div dangerouslySetInnerHTML={{ __html: serverData.motd.html.replace(/\n/g, '<br />') }} className="bg-black bg-opacity-50 p-2 my-2" />
-      <div className="flex justify-between text-lg">
+      <div className="flex font-sans justify-between text-lg">
         <div>{`Online Players (${players.online} of ${players.max})`}</div>
         {latency !== -1 ? <div>{latency == -99 ? '' : latency + ' ms'}</div> : <MdOutlineSignalCellularNodata className="text-white text-lg"/>}
       </div>
@@ -159,10 +159,10 @@ export default function Home() {
           className='border border-gray-800 rounded p-1 my-3 text-black'
         />
         <button 
-          onClick={proceed} className='minecraft-btn mx-auto w-64 text-center truncate p-1 border-2 border-b-4 hover:text-yellow-200'>
+          onClick={proceed} className='minecraft-btn mx-auto text-lg tracking-wider w-64 text-center truncate p-1 border-2 border-b-4 hover:text-yellow-200'>
           EXECUTE COMMAND
         </button>
-        <label className="flex items-center gap-2 text-sm">
+        <label className="flex font-sans items-center gap-2 text-md">
           <input
             type="checkbox"
             checked={autoClearTextArea}
@@ -171,7 +171,7 @@ export default function Home() {
           Auto-clear text area
         </label>
       </div>
-      <div className="text-xl mt-5">Output:</div>
+      <div className="text-xl font-sans mt-5">Output</div>
       {
         response.length !== 0 &&
         <textarea 
